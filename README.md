@@ -56,8 +56,32 @@ Le fichier `config.py` lit:
 
 Par defaut, la base SQLite est dans `instance/xmrig_dashboard.db`.
 
+## Configurer une instance XMRig
+
+Le dashboard lit l'API HTTP de XMRig (`/2/summary`).
+
+1) Ouvrir le fichier `config.json` de XMRig
+2) Activer l'API HTTP et definir un token
+
+Exemple:
+
+```json
+{
+  "http": {
+    "enabled": true,
+    "host": "0.0.0.0",
+    "port": 18080,
+    "access-token": "mon-token"
+  }
+}
+```
+
+Notes:
+- Utiliser l'IP du miner et le port `http.port` dans le dashboard.
+- Copier la valeur de `access-token` dans le champ "Access token" du miner.
+- Ouvrir le port dans le firewall si besoin (ex: 18080).
+
 ## Depannage
 
 - Erreur `no such table: users`:
   - La base a ete supprimee. Relancer `create_admin.py` ou `init_db.py`, puis redemarrer l'app.
-
