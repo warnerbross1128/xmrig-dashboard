@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}Historique Miner{% endblock %}
+{% block title_header %}📈 Historique - {{ miner.name }}{% endblock %}
+
+{% block content %}
+
+<h2>Historique du hashrate (10s)</h2>
+
+<p>
+    Miner : <strong>{{ miner.name }}</strong><br>
+    Adresse : {{ miner.host }}:{{ miner.port }}<br>
+    Points enregistrés : {{ stats_count }}<br>
+    {% if start_ts and end_ts %}
+        Période : {{ start_ts }} → {{ end_ts }}
+    {% endif %}
+</p>
+
+{% if not svg_path %}
+    <p class="muted">Pas assez de données pour afficher un graphe.</p>
+{% else %}
+    <div class="chart-container">
+        <svg viewBox="0 0 800 200" preserveAspectRatio="none">
+            <!-- Axe bas -->
+            <line x1="30" y1="180" x2="770" y2="180" class="chart-axis" />
+            <!-- Axe gauche -->
+            <line x1="30" y1="20" x2="30" y2="180" class="chart-axis" />
+
+            <!-- Courbe -->
+            <path d="{{ svg_path }}" class="chart-path" />
+
+            {% if max_hash %}
+                <text x="35" y="30" class="chart-label">
+                    Max: {{ max_hash|round(2) }} H/s (15 min)
+                </text>
+
+            {% endif %}
+
+            {% if start_ts and end_ts %}
+                <text x="35" y="195" class="chart-label">
+                    Début: {{ start_ts }}
+                </text>
+                <text x="400" y="195" class="chart-label">
+                    Fin: {{ end_ts }}
+                </text>
+            {% endif %}
+        </svg>
+    </div>
+{% endif %}
+
+<p style="margin-top:1rem;">
+    <a href="{{ url_for('miner_detail', miner_id=miner.id) }}" class="btn btn-secondary">
+        ⬅ Retour au détail
+    </a>
+</p>
+
+{% endblock %}

@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {% if miner %}Modifier Miner{% else %}Nouveau Miner{% endif %}
+{% endblock %}
+
+{% block content %}
+
+<h2>
+    {% if miner %}Modifier : {{ miner.name }}{% else %}Ajouter un Miner{% endif %}
+</h2>
+
+<form method="post">
+
+    <div class="form-group">
+        <label>Nom :</label>
+        <input type="text" name="name" class="input-text" required
+               value="{{ miner.name if miner else '' }}">
+    </div>
+
+    <div class="form-group">
+        <label>Host :</label>
+        <input type="text" name="host" class="input-text" required
+               value="{{ miner.host if miner else '' }}">
+    </div>
+
+    <div class="form-group">
+        <label>Port :</label>
+        <input type="number" name="port" class="input-text" required
+               value="{{ miner.port if miner else '18080' }}">
+    </div>
+
+    <div class="form-group">
+        <label>Access Token :</label>
+        <input type="text" name="access_token" class="input-text" required
+               value="{{ miner.access_token if miner else '' }}">
+    </div>
+
+    <div class="form-group">
+        <label>Type :</label>
+        <input type="text" name="miner_type" class="input-text"
+               value="{{ miner.miner_type if miner else 'unknown' }}">
+    </div>
+
+    <div class="form-group">
+        <label>Groupe :</label>
+        <input type="text" name="group" class="input-text"
+               value="{{ miner.group if miner else '' }}">
+    </div>
+
+    <div class="form-group">
+        <label>Notes :</label>
+        <textarea name="notes" class="input-text" rows="4">{{ miner.notes if miner else '' }}</textarea>
+    </div>
+
+    {% if miner %}
+        <div class="form-group">
+            <label>
+                <input type="checkbox" name="enabled" {% if miner.enabled %}checked{% endif %}>
+                Enabled
+            </label>
+        </div>
+    {% endif %}
+
+    <button type="submit" class="btn btn-primary">Enregistrer</button>
+</form>
+
+{% endblock %}

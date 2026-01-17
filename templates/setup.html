@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}Premiere ouverture{% endblock %}
+
+{% block content %}
+<h2>Premiere ouverture</h2>
+
+<form method="post">
+    <div class="form-group">
+        <label for="username">Nom d'utilisateur</label>
+        <input type="text" id="username" name="username" class="input-text" required>
+    </div>
+
+    <div class="form-group">
+        <label for="password">Mot de passe</label>
+        <input type="password" id="password" name="password" class="input-text" required>
+    </div>
+
+    <div class="form-group">
+        <label for="confirm_password">Confirmer le mot de passe</label>
+        <input type="password" id="confirm_password" name="confirm_password" class="input-text" required>
+    </div>
+
+    {% if error %}
+        <div class="flash flash-error">
+            {{ error }}
+        </div>
+    {% endif %}
+
+    <button type="submit" class="btn btn-primary">Creer le compte admin</button>
+</form>
+{% endblock %}

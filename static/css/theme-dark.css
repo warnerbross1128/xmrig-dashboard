@@ -1,0 +1,15 @@
+:root {
+    --bg-sidebar: #0f172a;
+    --bg-sidebar-hover: #1f2937;
+    --bg-header: #111827;
+    --bg-page: #0b1120;
+    --bg-card: #020617;
+    --border-card: #1e293b;
+
+    --text-main: #e5e7eb;
+    --text-muted: #9ca3af;
+
+    --accent: #38bdf8;
+    --danger: #f97373;
+    --success: #22c55e;
+}

@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <title>{% block title %}XMRig Dashboard{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- CSS layout commun -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <!-- CSS thème (variables uniquement) -->
+    <link id="theme-css" rel="stylesheet" href="{{ url_for('static', filename='css/theme-dark.css') }}">
+</head>
+
+
+<body>
+<div class="layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="sidebar-title">
+            XMRig Dashboard
+        </div>
+
+        <ul class="sidebar-nav">
+            <li>
+                <a href="{{ url_for('dashboard') }}">📊 Dashboard</a>
+            </li>
+            <li>
+                <a href="{{ url_for('miners_list') }}">💻 Miners</a>
+            </li>
+            <li>
+                <a href="{{ url_for('settings') }}">⚙️ Paramètres</a>
+            </li>
+            <li>
+                <a href="{{ url_for('history_combo') }}">📊 Global + Miners</a>
+            </li>
+
+        </ul>
+
+        <div class="sidebar-footer">
+            <div>v0.1 • prototype</div>
+        </div>
+    </aside>
+
+    <!-- MAIN -->
+    <div class="main">
+
+        <header class="header">
+            <div class="header-title">
+                {% block title_header %}{% endblock %}
+            </div>
+            <div class="header-user">
+                {% if current_user.is_authenticated %}
+                    <span>👤 <strong>{{ current_user.username }}</strong></span>
+
+                    <select id="theme-selector">
+                        <option value="dark">Dark</option>
+                        <option value="light">Light</option>
+                        <option value="neon">Neon</option>
+                    </select>
+
+                    <form action="{{ url_for('logout') }}" method="get">
+                        <button class="btn-logout" type="submit">Déconnexion</button>
+                    </form>
+                {% endif %}
+            </div>
+
+        </header>
+
+        <div class="content">
+
+            <!-- FLASH MESSAGES -->
+            <div class="flash-wrapper">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                  {% if messages %}
+                    {% for category, msg in messages %}
+                      <div class="flash {% if category == 'success' %}flash-success{% else %}flash-error{% endif %}">
+                        {{ msg }}
+                      </div>
+                    {% endfor %}
+                  {% endif %}
+                {% endwith %}
+            </div>
+
+            <div class="card">
+                {% block content %}{% endblock %}
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const themeCss = document.getElementById("theme-css");
+    const selector = document.getElementById("theme-selector");
+    const themeBase = "{{ url_for('static', filename='css/') }}"; // ex: /static/css/
+
+    if (!selector || !themeCss) return;
+
+    // Charger le thème enregistré (dark par défaut)
+    const savedTheme = localStorage.getItem("xmrig_theme") || "dark";
+    selector.value = savedTheme;
+    themeCss.href = themeBase + "theme-" + savedTheme + ".css";
+
+    // Quand l'utilisateur change de thème
+    selector.addEventListener("change", function() {
+        const theme = selector.value;
+        themeCss.href = themeBase + "theme-" + theme + ".css";
+        localStorage.setItem("xmrig_theme", theme);
+    });
+});
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}Miners{% endblock %}
+
+{% block content %}
+<h2>Liste des miners</h2>
+
+<p>
+    <a href="{{ url_for('miner_new') }}" class="btn btn-primary">➕ Ajouter un miner</a>
+</p>
+
+{% if miners|length == 0 %}
+    <p>Aucun miner pour l'instant.</p>
+{% else %}
+<table>
+    <tr>
+        <th>Nom</th>
+        <th>Adresse</th>
+        <th>Type</th>
+        <th>Enabled</th>
+        <th>Actions</th>
+    </tr>
+
+    {% for m in miners %}
+    <tr>
+        <td>{{ m.name }}</td>
+        <td>{{ m.host }}:{{ m.port }}</td>
+        <td>{{ m.miner_type }}</td>
+        <td>{{ "Oui" if m.enabled else "Non" }}</td>
+        <td>
+            <a href="{{ url_for('miner_edit', miner_id=m.id) }}" class="btn-small btn-secondary">Modifier</a>
+            <a href="{{ url_for('miner_detail', miner_id=m.id) }}" class="btn-small btn-secondary">Détails</a>
+
+            <form method="post"
+                  action="{{ url_for('miner_delete', miner_id=m.id) }}"
+                  style="display:inline;">
+                <button type="submit"
+                        class="btn-small btn-danger"
+                        onclick="return confirm('Supprimer ?')">
+                    Supprimer
+                </button>
+            </form>
+
+            <form method="post"
+                  action="{{ url_for('miner_test', miner_id=m.id) }}"
+                  style="display:inline;">
+                <button type="submit" class="btn-small btn-secondary">
+                    Test
+                </button>
+            </form>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endif %}
+
+{% endblock %}

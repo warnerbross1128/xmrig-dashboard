@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}Historique Combiné{% endblock %}
+{% block title_header %}📈 Graphique global & individuellement superposé{% endblock %}
+
+{% block content %}
+
+<h2>Vue combinée (global + par miner)</h2>
+
+{% if not svg_global %}
+    <p class="muted">Pas assez de données pour afficher un graphique.</p>
+{% else %}
+
+<p>
+    Période : {{ start_ts }} → {{ end_ts }}
+</p>
+
+<div class="chart-container">
+    <svg viewBox="0 0 800 200" preserveAspectRatio="none">
+
+        <!-- Axes -->
+        <line x1="30" y1="180" x2="770" y2="180" class="chart-axis" />
+        <line x1="30" y1="20"  x2="30"  y2="180" class="chart-axis" />
+
+        <!-- Courbe globale -->
+        <path d="{{ svg_global }}" stroke="var(--accent)" fill="none" stroke-width="3"/>
+
+        <!-- Courbes individuelles -->
+        {% for miner in miners %}
+            {% if svg_paths[miner.id] %}
+                <path d="{{ svg_paths[miner.id] }}"
+                      stroke="{{ colors[miner.id] }}"
+                      fill="none"
+                      stroke-width="1.5"
+                      opacity="0.7"/>
+            {% endif %}
+        {% endfor %}
+
+        <!-- Légende -->
+        <g>
+            <!-- Global -->
+            <rect x="35" y="25" width="12" height="12" fill="var(--accent)" />
+            <text x="52" y="35" class="chart-label">Global</text>
+
+            {% set dy = 0 %}
+            {% for miner in miners %}
+                {% if svg_paths[miner.id] %}
+                    <rect x="35" y="{{ 45 + loop.index0*18 }}" width="12" height="12"
+                          fill="{{ colors[miner.id] }}" />
+                    <text x="52" y="{{ 55 + loop.index0*18 }}" class="chart-label">
+                        {{ miner.name }}
+                    </text>
+                {% endif %}
+            {% endfor %}
+        </g>
+
+    </svg>
+</div>
+
+{% endif %}
+
+{% endblock %}

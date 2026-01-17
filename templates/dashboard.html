@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+{% block title_header %}📊 Dashboard{% endblock %}
+
+{% block content %}
+
+<h2>Vue d'ensemble</h2>
+
+<div class="cards-row">
+    <div class="card stat-card">
+        <h3>Total Hashrate (10s)</h3>
+        <p class="stat-value">
+            {{ total_hash_10s|round(2) }} H/s
+        </p>
+    </div>
+
+    <div class="card stat-card">
+        <h3>Miners Online</h3>
+        <p class="stat-value success">{{ online_count }}</p>
+    </div>
+
+    <div class="card stat-card">
+        <h3>Miners Offline</h3>
+        <p class="stat-value danger">{{ offline_count }}</p>
+    </div>
+</div>
+
+<h2>Miners</h2>
+
+<table>
+    <tr>
+        <th>Nom</th>
+        <th>Status</th>
+        <th>Hashrate (10s)</th>
+        <th>Hashrate (60s)</th>
+        <th>Hashrate (15m)</th>
+        <th>Algo</th>
+        <th>Pool</th>
+    </tr>
+
+    {% for item in miners_stats %}
+        {% set m = item.miner %}
+        {% set s = item.stats %}
+
+        <tr>
+            <td>{{ m.name }}</td>
+
+            <td>
+                {% if s.status == "online" %}
+                    <span class="success">Online</span>
+                {% elif s.status == "offline" %}
+                    <span class="danger">Offline</span>
+                {% elif s.status == "disabled" %}
+                    <span class="muted">Disabled</span>
+                {% else %}
+                    <span class="muted">Inconnu</span>
+                {% endif %}
+            </td>
+
+            {% if s.status == "online" %}
+                <td>
+                    {% if s.hash_10s is not none %}
+                        {{ s.hash_10s|round(2) }}
+                    {% else %}
+                        <span class="muted">N/A</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if s.hash_60s is not none %}
+                        {{ s.hash_60s|round(2) }}
+                    {% else %}
+                        <span class="muted">N/A</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if s.hash_15m is not none %}
+                        {{ s.hash_15m|round(2) }}
+                    {% else %}
+                        <span class="muted">N/A</span>
+                    {% endif %}
+                </td>
+                <td>{{ s.algo or '-' }}</td>
+                <td>{{ s.pool or '-' }}</td>
+            {% else %}
+                <td colspan="5" class="muted">N/A</td>
+            {% endif %}
+        </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

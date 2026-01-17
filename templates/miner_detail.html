@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% block title %}Détail Miner{% endblock %}
+{% block title_header %}💻 Détail - {{ miner.name }}{% endblock %}
+
+{% block content %}
+
+<h2>{{ miner.name }}</h2>
+
+<!-- ======= SECTION INFOS GÉNÉRALES ======= -->
+
+<div class="card" style="margin-bottom: 1.5rem;">
+    <h3>Informations</h3>
+
+    <p><strong>Adresse :</strong> {{ miner.host }}:{{ miner.port }}</p>
+    <p><strong>Type :</strong> {{ miner.miner_type }}</p>
+    <p><strong>Groupe :</strong> {{ miner.group or '-' }}</p>
+    <p><strong>Notes :</strong> {{ miner.notes or '-' }}</p>
+    <p><strong>État :</strong>
+        {% if stats.status == "online" %}
+            <span class="success">Online</span>
+        {% elif stats.status == "offline" %}
+            <span class="danger">Offline</span>
+        {% else %}
+            <span class="muted">Disabled</span>
+        {% endif %}
+    </p>
+
+    <div style="margin-top:1rem;">
+        <a href="{{ url_for('miner_edit', miner_id=miner.id) }}" class="btn btn-secondary">Modifier</a>
+
+        <form action="{{ url_for('miner_delete', miner_id=miner.id) }}"
+              method="post" style="display:inline;">
+            <button class="btn btn-danger" onclick="return confirm('Supprimer ?')">Supprimer</button>
+        </form>
+
+        <!-- Test du miner -->
+        <form action="{{ url_for('miner_test', miner_id=miner.id) }}"
+              method="post" style="display:inline;">
+            <button class="btn btn-secondary">Tester</button>
+        </form>
+        <a href="{{ url_for('miner_history', miner_id=miner.id) }}" class="btn btn-secondary">
+            Historique
+        </a>
+
+    </div>
+</div>
+
+
+<!-- ======= SECTION STATS LIVE ======= -->
+
+<h3>Statistiques live</h3>
+
+<div class="cards-row">
+    <div class="card stat-card">
+        <h4>Status</h4>
+        {% if stats.status == "online" %}
+            <p class="stat-value success">Online</p>
+        {% elif stats.status == "offline" %}
+            <p class="stat-value danger">Offline</p>
+        {% else %}
+            <p class="stat-value muted">Disabled</p>
+        {% endif %}
+    </div>
+
+    <div class="card stat-card">
+        <h4>Hashrate 10s</h4>
+        <p class="stat-value">
+            {% if stats.status == "online" and stats.hash_10s is not none %}
+                {{ stats.hash_10s|round(2) }} H/s
+            {% else %}
+                <span class="muted">N/A</span>
+            {% endif %}
+        </p>
+    </div>
+
+    <div class="card stat-card">
+        <h4>Hashrate 60s</h4>
+        <p class="stat-value">
+            {% if stats.status == "online" and stats.hash_60s is not none %}
+                {{ stats.hash_60s|round(2) }} H/s
+            {% else %}
+                <span class="muted">N/A</span>
+            {% endif %}
+        </p>
+    </div>
+
+    <div class="card stat-card">
+        <h4>Hashrate 15m</h4>
+        <p class="stat-value">
+            {% if stats.status == "online" and stats.hash_15m is not none %}
+                {{ stats.hash_15m|round(2) }} H/s
+            {% else %}
+                <span class="muted">N/A</span>
+            {% endif %}
+        </p>
+    </div>
+</div>
+
+<!-- ======= ALGO / POOL ======= -->
+
+<div class="card" style="margin-top:1.5rem;">
+    <h3>Configuration XMRig</h3>
+
+    <p><strong>Algo :</strong> {{ stats.algo or '-' }}</p>
+    <p><strong>Pool :</strong> {{ stats.pool or '-' }}</p>
+
+    {% if stats.raw %}
+        <p><strong>Version XMRig :</strong> {{ stats.raw.get("version") or '-' }}</p>
+        <p><strong>Threads :</strong> {{ stats.raw.get("cpu", {}).get("threads") or '-' }}</p>
+        <p><strong>Uptime (sec) :</strong> {{ stats.raw.get("connection", {}).get("uptime") or '-' }}</p>
+    {% endif %}
+</div>
+
+{% endblock %}
